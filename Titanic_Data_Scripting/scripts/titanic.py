@@ -1,11 +1,37 @@
-import numpy as np
+# import subprocess
+# import sys
+
+# def install(package):
+#     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# import numpy as np
+# import pandas as pd
+
+# import seaborn as sns
+# import matplotlib.pyplot as plt
+# from matplotlib.ticker import StrMethodFormatter
+
+def install_packages(packages):
+    for package in packages:
+        import importlib
+        try:
+            importlib.import_module(package)
+        except ImportError:
+            import pip
+            pip.main(['install', package])
+        # finally:
+        #     globals()[package] = importlib.import_module(package)
+
+required_packages = ["numpy", 'seaborn', "pandas"]
+
+install_packages(required_packages)
+
 import pandas as pd
-
-import seaborn as sns
+import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import StrMethodFormatter
+import seaborn as sns
 
-def clean_titanic(file: str = "./tested.csv"):
+def clean_titanic(file: str = "./data/titanic.csv"):
     """
     Function that cleans titanic
     """
