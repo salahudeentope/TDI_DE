@@ -1,7 +1,7 @@
 """
 Data Pipeline and CLI app for the Titanic Dataset
 """
-required_packages = ["numpy", 'seaborn', "pandas"]
+required_packages = ["numpy", 'seaborn', "pandas", 'click']
 
 # Function to install required packages.
 
@@ -22,8 +22,16 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import click
+
+
 
 class TitanicCleaner ():
+    """
+    Data pipeline Class to consolidate all the methods 
+    for loading, transforming and cleaning the Titanic dataset 
+    """
+    
     def __init__ (self, data):
         self.data = data
 
