@@ -2,6 +2,7 @@ import warnings
 import os
 import logging
 
+
 # Suppress all warnings
 warnings.filterwarnings("ignore")
 
@@ -17,6 +18,7 @@ logging.basicConfig(level=logging.INFO,
                         logging.StreamHandler()
                     ])
 logger = logging.getLogger()
+
 
 class TitanicCleaner:
     """
