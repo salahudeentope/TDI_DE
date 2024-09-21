@@ -1,4 +1,5 @@
 import warnings
+import os
 
 # Suppress all warnings
 warnings.filterwarnings("ignore")
@@ -6,7 +7,6 @@ warnings.filterwarnings("ignore")
 import click
 import pandas as pd
 import numpy as np
-
 
 class TitanicCleaner:
     """
@@ -23,16 +23,12 @@ class TitanicCleaner:
         print(f"This is the head: {self.data.head(2)}")
 
     def _data_info(self):
-        """
-        Function that provides initial info about the data
-        """
+        """Provide initial info about the data."""
         print(self.data.describe(include='all'))
         print(f"THIS IS DATA INFO: {self.data.info()}")
 
     def _fill_missing(self):
-        """
-        Function that fills missing values
-        """
+        """Fill missing values."""
         print(self.data.isnull().sum())
         self.data.Age.fillna(0, inplace=True)
         self.data.Fare.fillna(1, inplace=True)
@@ -41,18 +37,14 @@ class TitanicCleaner:
         return self.data
 
     def _drop_duplicates(self):
-        """
-        Function that removes duplicate rows
-        """
+        """Remove duplicate rows."""
         print(self.data.duplicated().value_counts())
         self.data = self.data.drop_duplicates()
         print("Duplicate rows dropped.")
         return self.data
 
     def _bin_age(self):
-        """
-        Bins the 'Age' column into categories using apply()
-        """
+        """Bin the 'Age' column into categories."""
         def age_group(age):
             if age < 18:
                 return '<18'
@@ -63,44 +55,35 @@ class TitanicCleaner:
             else:
                 return '60+'
         
-        self.data['AgeGroup'] = self.data['Age'].apply(lambda x: age_group(x))
+        self.data['AgeGroup'] = self.data['Age'].apply(age_group)
         print(f"Binned Age Data:\n{self.data[['Age', 'AgeGroup']].head()}")
         return self.data
 
     def _family_size(self):
-        """
-        Adds 'FamilySize' column using apply()
-        """
+        """Add 'FamilySize' column."""
         self.data['FamilySize'] = self.data.apply(lambda row: row['SibSp'] + row['Parch'], axis=1)
         print(f"Family Size Added:\n{self.data[['SibSp', 'Parch', 'FamilySize']].head()}")
         return self.data
 
     def _map_embarked(self):
-        """
-        Maps the 'Embarked' column to readable names using apply()
-        """
+        """Map the 'Embarked' column to readable names."""
         embark_mapping = {'S': "Southampton", "C": "Cherbourg", 'Q': 'Queenstown'}
         self.data['Embarked_mapped'] = self.data['Embarked'].apply(lambda x: embark_mapping.get(x, x))
         print(f"Mapped Embarked Locations:\n{self.data[['Embarked', 'Embarked_mapped']].head()}")
         return self.data
 
-    def clean_titanic(self, show_info=False, fill_missing=False, drop_duplicates=False, bin_age=False, family_size=False, map_embarked=False):
-        """
-        Function that cleans the dataset based on the flags
-        """
-        if show_info:
-            self._data_info()
-        if fill_missing:
-            self.data = self._fill_missing()
-        if drop_duplicates:
-            self.data = self._drop_duplicates()
-        if bin_age:
-            self.data = self._bin_age()
-        if family_size:
-            self.data = self._family_size()
-        if map_embarked:
-            self.data = self._map_embarked()
-        return self.data
+    def save_data(self, temp_file='temp_titanic_data.csv'):
+        """Save the current state of the data to a temporary CSV file."""
+        self.data.to_csv(temp_file, index=False)
+        print(f"Current state of the data saved to {temp_file}.")
+
+    def load_data(self, temp_file='temp_titanic_data.csv'):
+        """Load the current state of the data from the temporary CSV file."""
+        if os.path.exists(temp_file):
+            self.data = pd.read_csv(temp_file)
+            print(f"Loaded current state of the data from {temp_file}.")
+        else:
+            print(f"No temporary data file found at {temp_file}.")
 
 
 # Click-based CLI
@@ -117,16 +100,26 @@ def clean_csv(csv_file, show_info, fill_missing, drop_duplicates, bin_age, famil
     """CLI function to clean the Titanic dataset with optional transformations."""
     cleaner = TitanicCleaner(csv_file)
 
+    # Load current state from the temporary file if it exists
+    cleaner.load_data()
+
     # Clean the data based on selected options
-    cleaner.clean_titanic(
-        show_info=show_info,
-        fill_missing=fill_missing,
-        drop_duplicates=drop_duplicates,
-        bin_age=bin_age,
-        family_size=family_size,
-        map_embarked=map_embarked
-    )
-    
+    if show_info:
+        cleaner._data_info()
+    if fill_missing:
+        cleaner._fill_missing()
+    if drop_duplicates:
+        cleaner._drop_duplicates()
+    if bin_age:
+        cleaner._bin_age()
+    if family_size:
+        cleaner._family_size()
+    if map_embarked:
+        cleaner._map_embarked()
+
+    # Save the current state of the data
+    cleaner.save_data()
+
     print("Data cleaning/transformation completed!")
 
     # Show the first few rows of the dataset if --show-head flag is passed
