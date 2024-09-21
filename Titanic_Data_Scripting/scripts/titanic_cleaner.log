@@ -1,0 +1,57 @@
+2024-09-21 14:50:41,913 - INFO - Loaded data from /Users/topesalahudeen/Desktop/TDI/TDI_DE/Titanic_Data_Scripting/data/titanic.csv
+2024-09-21 14:50:41,914 - INFO - These are the columns: ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
+2024-09-21 14:50:41,927 - INFO - This is the head: 
+   PassengerId  Survived  Pclass  ...    Fare Cabin  Embarked
+0          892         0       3  ...  7.8292   NaN         Q
+1          893         1       3  ...  7.0000   NaN         S
+
+[2 rows x 12 columns]
+2024-09-21 14:50:41,928 - WARNING - No temporary data file found at temp_titanic_data.csv.
+2024-09-21 14:50:41,933 - INFO - Binned Age Data:
+    Age AgeGroup
+0  34.5    18-40
+1  47.0    40-60
+2  62.0      60+
+3  27.0    18-40
+4  22.0    18-40
+2024-09-21 14:50:41,937 - INFO - Current state of the data saved to temp_titanic_data.csv.
+2024-09-21 14:50:41,937 - INFO - Data cleaning/transformation completed!
+2024-09-21 14:51:19,370 - INFO - Loaded data from /Users/topesalahudeen/Desktop/TDI/TDI_DE/Titanic_Data_Scripting/data/titanic.csv
+2024-09-21 14:51:19,370 - INFO - These are the columns: ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
+2024-09-21 14:51:19,381 - INFO - This is the head: 
+   PassengerId  Survived  Pclass  ...    Fare Cabin  Embarked
+0          892         0       3  ...  7.8292   NaN         Q
+1          893         1       3  ...  7.0000   NaN         S
+
+[2 rows x 12 columns]
+2024-09-21 14:51:19,384 - INFO - Loaded current state of the data from temp_titanic_data.csv.
+2024-09-21 14:51:19,387 - INFO - Mapped Embarked Locations:
+  Embarked Embarked_mapped
+0        Q      Queenstown
+1        S     Southampton
+2        Q      Queenstown
+3        S     Southampton
+4        S     Southampton
+2024-09-21 14:51:19,392 - INFO - Current state of the data saved to temp_titanic_data.csv.
+2024-09-21 14:51:19,392 - INFO - Data cleaning/transformation completed!
+2024-09-21 14:51:33,449 - INFO - Loaded data from /Users/topesalahudeen/Desktop/TDI/TDI_DE/Titanic_Data_Scripting/data/titanic.csv
+2024-09-21 14:51:33,449 - INFO - These are the columns: ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
+2024-09-21 14:51:33,467 - INFO - This is the head: 
+   PassengerId  Survived  Pclass  ...    Fare Cabin  Embarked
+0          892         0       3  ...  7.8292   NaN         Q
+1          893         1       3  ...  7.0000   NaN         S
+
+[2 rows x 12 columns]
+2024-09-21 14:51:33,471 - INFO - Loaded current state of the data from temp_titanic_data.csv.
+2024-09-21 14:51:33,503 - INFO - Current state of the data saved to temp_titanic_data.csv.
+2024-09-21 14:51:33,503 - INFO - Data cleaning/transformation completed!
+2024-09-21 14:51:33,504 - INFO - Here is the current state of the dataset after applying transformations:
+2024-09-21 14:51:33,520 - INFO -    PassengerId  Survived  Pclass  ... Embarked AgeGroup  Embarked_mapped
+0          892         0       3  ...        Q    18-40       Queenstown
+1          893         1       3  ...        S    40-60      Southampton
+2          894         0       2  ...        Q      60+       Queenstown
+3          895         0       3  ...        S    18-40      Southampton
+4          896         1       3  ...        S    18-40      Southampton
+
+[5 rows x 14 columns]
+2024-09-21 14:51:33,521 - INFO - Columns: ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked', 'AgeGroup', 'Embarked_mapped']

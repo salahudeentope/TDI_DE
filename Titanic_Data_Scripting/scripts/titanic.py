@@ -1,5 +1,6 @@
 import warnings
 import os
+import logging
 
 # Suppress all warnings
 warnings.filterwarnings("ignore")
@@ -7,6 +8,15 @@ warnings.filterwarnings("ignore")
 import click
 import pandas as pd
 import numpy as np
+
+# Configure logging
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    handlers=[
+                        logging.FileHandler("titanic_cleaner.log"),
+                        logging.StreamHandler()
+                    ])
+logger = logging.getLogger()
 
 class TitanicCleaner:
     """
@@ -17,30 +27,32 @@ class TitanicCleaner:
     def __init__(self, csv_file):
         self.csv_file = csv_file
         self.data = pd.read_csv(csv_file)  # Load data once on initialization
-        print(f"Loaded data from {csv_file}")
-        print(f"These are the columns: {self.data.columns}")
-        print('---------------------------------')
-        print(f"This is the head: {self.data.head(2)}")
+        logger.info(f"Loaded data from {csv_file}")
+        logger.info(f"These are the columns: {self.data.columns.tolist()}")
+        logger.info(f"This is the head: \n{self.data.head(2)}")
 
     def _data_info(self):
         """Provide initial info about the data."""
-        print(self.data.describe(include='all'))
-        print(f"THIS IS DATA INFO: {self.data.info()}")
+        logger.info("Data description:")
+        logger.info(f"{self.data.describe(include='all')}")
+        logger.info(f"Data info: {self.data.info()}")
 
     def _fill_missing(self):
         """Fill missing values."""
-        print(self.data.isnull().sum())
+        logger.info("Checking for missing values:")
+        logger.info(f"{self.data.isnull().sum()}")
         self.data.Age.fillna(0, inplace=True)
         self.data.Fare.fillna(1, inplace=True)
         self.data.Cabin.fillna("NA", inplace=True)
-        print("Missing values filled.")
+        logger.info("Missing values filled.")
         return self.data
 
     def _drop_duplicates(self):
         """Remove duplicate rows."""
-        print(self.data.duplicated().value_counts())
+        logger.info("Checking for duplicates:")
+        logger.info(f"{self.data.duplicated().value_counts()}")
         self.data = self.data.drop_duplicates()
-        print("Duplicate rows dropped.")
+        logger.info("Duplicate rows dropped.")
         return self.data
 
     def _bin_age(self):
@@ -56,34 +68,34 @@ class TitanicCleaner:
                 return '60+'
         
         self.data['AgeGroup'] = self.data['Age'].apply(age_group)
-        print(f"Binned Age Data:\n{self.data[['Age', 'AgeGroup']].head()}")
+        logger.info(f"Binned Age Data:\n{self.data[['Age', 'AgeGroup']].head()}")
         return self.data
 
     def _family_size(self):
         """Add 'FamilySize' column."""
         self.data['FamilySize'] = self.data.apply(lambda row: row['SibSp'] + row['Parch'], axis=1)
-        print(f"Family Size Added:\n{self.data[['SibSp', 'Parch', 'FamilySize']].head()}")
+        logger.info(f"Family Size Added:\n{self.data[['SibSp', 'Parch', 'FamilySize']].head()}")
         return self.data
 
     def _map_embarked(self):
         """Map the 'Embarked' column to readable names."""
         embark_mapping = {'S': "Southampton", "C": "Cherbourg", 'Q': 'Queenstown'}
         self.data['Embarked_mapped'] = self.data['Embarked'].apply(lambda x: embark_mapping.get(x, x))
-        print(f"Mapped Embarked Locations:\n{self.data[['Embarked', 'Embarked_mapped']].head()}")
+        logger.info(f"Mapped Embarked Locations:\n{self.data[['Embarked', 'Embarked_mapped']].head()}")
         return self.data
 
     def save_data(self, temp_file='temp_titanic_data.csv'):
         """Save the current state of the data to a temporary CSV file."""
         self.data.to_csv(temp_file, index=False)
-        print(f"Current state of the data saved to {temp_file}.")
+        logger.info(f"Current state of the data saved to {temp_file}.")
 
     def load_data(self, temp_file='temp_titanic_data.csv'):
         """Load the current state of the data from the temporary CSV file."""
         if os.path.exists(temp_file):
             self.data = pd.read_csv(temp_file)
-            print(f"Loaded current state of the data from {temp_file}.")
+            logger.info(f"Loaded current state of the data from {temp_file}.")
         else:
-            print(f"No temporary data file found at {temp_file}.")
+            logger.warning(f"No temporary data file found at {temp_file}.")
 
 
 # Click-based CLI
@@ -120,13 +132,13 @@ def clean_csv(csv_file, show_info, fill_missing, drop_duplicates, bin_age, famil
     # Save the current state of the data
     cleaner.save_data()
 
-    print("Data cleaning/transformation completed!")
+    logger.info("Data cleaning/transformation completed!")
 
     # Show the first few rows of the dataset if --show-head flag is passed
     if show_head:
-        print("\nHere is the current state of the dataset after applying transformations:")
-        print(cleaner.data.head())
-        print(cleaner.data.columns)
+        logger.info("Here is the current state of the dataset after applying transformations:")
+        logger.info(f"{cleaner.data.head()}")
+        logger.info(f"Columns: {cleaner.data.columns.tolist()}")
 
 if __name__ == '__main__':
     clean_csv()
