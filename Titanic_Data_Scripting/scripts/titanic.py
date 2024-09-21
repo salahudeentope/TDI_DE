@@ -43,7 +43,7 @@ class TitanicCleaner:
         logger.info(f"{self.data.isnull().sum()}")
         self.data.Age.fillna(0, inplace=True)
         self.data.Fare.fillna(1, inplace=True)
-        self.data.Cabin.fillna("NA", inplace=True)
+        self.data.Cabin.fillna("Unknown", inplace=True)
         logger.info("Missing values filled.")
         return self.data
 
